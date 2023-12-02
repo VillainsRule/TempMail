@@ -13,13 +13,20 @@ export default function Main() {
     let [ messages, setMessages ] = useState([]);
     let [ showingProviders, setShowingProviders ] = useState(false);
 
-    const toExpiry = () => {
+    const toExpiry = (s = false, pr = 1) => {
         setEmail('loading...');
+        if (s) {
+            return fetch('/api/shuffle/' + (pr || provider)).then(r => r.json()).then(r => {
+                console.log(r);
+                setEmail(r.email);
+                setMessages(r.mail);
+            });
+        }
         fetch("/api/me").then(r => r.json()).then(r => {
             if (r.error) {
                 fetch('/api/shuffle/' + provider).then(r => r.json()).then(r => {
-                    console.log(r);
                     setEmail(r.email);
+                    setMessages(r.mail);
                 });
             } else {
                 if (r.hasEmail) {
@@ -28,6 +35,12 @@ export default function Main() {
                 }
             }
         });
+    };
+
+    const getExpiry = async () => {
+        let r = await fetch('/api/tl');
+        let j = await r.json();
+        return j.timeLeft / 1000;
     };
 
     useEffect(() => {
@@ -39,10 +52,10 @@ export default function Main() {
             <div className={styles.background} />
 
             <Header />
-            <Email states={[ email, setShowingProviders ]} funcs={[ toExpiry ]}/>
-            <Messages />
+            <Email states={[ email, setShowingProviders ]} funcs={[ toExpiry, getExpiry ]}/>
+            <Messages states={[ [messages, setMessages] ]} />
 
-            { showingProviders ? <ProviderList visibleStates={[ showingProviders, setShowingProviders ]} providerStates={[ provider, setProvider ]} funcs={[ toExpiry ]} /> : null }
+            { showingProviders ? <ProviderList visibleStates={[ showingProviders, setShowingProviders ]} providerStates={[ provider, setProvider ]} funcs={[ toExpiry, getExpiry ]} /> : null }
         </>
     );
 };

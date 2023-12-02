@@ -9,7 +9,6 @@ import * as _provider_3 from './providers/minuteinbox-com.js';
 
 // pointless declarative types (will be useful for a potential "switch servers" button on the frontend)
 const Providers = {
-    TenMinuteMail: 0,
     OneSecMail: 1,
     MinuteInbox: 2,
     DisposableMail: 3
@@ -33,7 +32,6 @@ app.use(session({
 app.use((req, res, next) => {
     if (req.session.email) {
         if (req.session.user.expiry < new Date().getTime()) {
-            console.log("session expired.");
             req.session.destroy();
             return res.redirect("/");
         }
@@ -95,8 +93,6 @@ class Generator {
 
     async generate() {
         switch (this.#prov) {
-            case 0:
-                return await this.#generate_10mm();
             case 1:
                 return await this.#generate_1sm();
             case 2:
@@ -104,7 +100,7 @@ class Generator {
             case 3:
                 return await this.#generate_dm();
             default:
-                return await this.#generate_10mm();
+                return await this.#generate_1sm();
         }
     }
 }
@@ -176,7 +172,7 @@ app.get("/api/content", async (req, res) => {
     }
     switch (id) {
         case 1:
-            res.json(await _provider_2.Email.readMessageById(email, id));
+            res.json((await _provider_2.Email.readMessageById(email, id)).body);
             break;
         case 2:
             res.json(await _provider_3.Email.getEmailContent(email, id));
@@ -206,26 +202,25 @@ app.get("/api/messages", async (req, res) => {
         res.json({ error: "no host in current session." });
         return;
     }
-    if (host < 0 || host > 3) {
+    if (host < 1 || host > 3) {
         res.json({ error: "invalid host." });
         return;
     }
+    let m = [];
     switch (host) {
-        case 0:
-            req.session.user.email.mail = await refs[req.session.user.ref].f.getMessages();
-            break;
         case 1:
-            req.session.user.email.mail = await _provider_2.Email.refresh(email);
+            m = await _provider_2.Email.refresh(req.session.user.email);
             break;
         case 2:
-            req.session.user.email.mail = await _provider_3.Email.emails(email);
+            m = await _provider_3.Email.emails(req.session.user.email);
             break;
         case 3:
-            req.session.user.email.mail = await _provider_3.Email.emails(email);
+            m = await _provider_3.Email.emails(req.session.user.email);
             break;
     };
+    req.session.user.email.mail = m;
     req.session.save((e) => {
-        return res.json(req.session.user.email.mail);
+        return res.json(m);
     });
 });
 
@@ -234,16 +229,32 @@ let indR = 0;
 
 app.get("/api/shuffle/:server", async (req, res) => {
     let server = parseInt(req.params.server) || Providers.TenMinuteMail;
-    if (server < 0 || server > 3) {
+    if (server < 1 || server > 3) {
         res.json({ error: "invalid server." });
         return;
     }
-    if (req.session.user && req.session.user.expiry && req.session.user.expiry > new Date().getTime()) {
+    if (req.session.user && req.session.user.expiry && req.session.user.expiry > new Date().getTime() && server === parseInt(req.session.user.host)) {
         res.json({ error: "please wait before shuffling again." });
         return;
     }
     let gen = new Generator(server, res);
     let email = await gen.generate();
+    if (!email.mail || !Array.isArray(email.mail)) {
+        email.mail = [];
+    }
+    if (!(server === 2)) {
+        email.mail.push({
+            id: 0,
+            from: "Admin <Admin@tempmail.villainsrule.xyz>",
+            to: "Me <" + email.email + ">",
+            title: {
+                preview: "Welcome to TempMail.",
+                full: "Welcome to TempMail."
+            },
+            date: new Date().toLocaleTimeString(),
+            state: "new"
+        });
+    }
     req.session.user = {
         email,
         host: server.toString(),

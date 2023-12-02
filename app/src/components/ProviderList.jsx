@@ -21,13 +21,13 @@ export default function ProviderList({ visibleStates, providerStates, funcs }) {
                 </div>
                 <div className={styles.modalBody}>
                     <p style={{color: "gray"}}>Are your other emails blocked? You may switch providers with this menu.</p>
-                    {range(4).map(i => (
-                        <div className={styles.provider} key={i}>
-                            <div className={styles.providerName}>Server {i}</div>
+                    {range(3).map(i => (
+                        <div className={styles.provider} key={i + 1}>
+                            <div className={styles.providerName}>Server {i + 1}</div>
                             <div className={styles.providerButton} onClick={() => {
-                                setProvider(i);
+                                setProvider(i + 1);
                                 setShowingProviders(false);
-                                toExpiry();
+                                toExpiry(true, i + 1);
                             }}>Use</div>
                         </div>
                     ))}

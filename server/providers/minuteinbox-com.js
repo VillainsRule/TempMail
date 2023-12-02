@@ -99,8 +99,10 @@ const Replacers = {
         }
     },
     spoofMessageTitle: (message) => {
-        if (message.title.preview === "Welcome to DisposableMail..." || message.title.full === "Welcome to DisposableMail:)" || message.title.preview === "Welcome to MinuteInbox:)") {
+        if (message.title.preview === "Welcome to DisposableMail..." || message.title.full === "Welcome to DisposableMail:)" || message.title.preview === "Welcome to MinuteInbox:)" || message.title.full === "Welcome to MinuteInbox..." || message.title.full === "Welcome to MinuteInbox:)") {
             return "Welcome to TempMail.";
+        } else {
+            return message.title.preview;
         }
     }
 };
@@ -291,7 +293,7 @@ const Email = {
         }
       );
       const emailsJson = await emails.body.text();
-      resolve(data.email, makeUnderstandable(JSON.parse(emailsJson.replace(/[^\S ]+/g, ""))));
+      resolve(makeUnderstandable(data.email, JSON.parse(emailsJson.replace(/[^\S ]+/g, ""))));
     });
   },
 

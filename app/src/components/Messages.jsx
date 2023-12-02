@@ -1,21 +1,23 @@
 import styles from '@styles/messages.module.css';
 
-export default function Email() {
+export default function Email({ states }) {
+    let [ messages, setMessages ] = states[0];
     return (
         <>
             <div className={styles.messageList}>
-                <div className={styles.email}>
-                    <div className={styles.infoColumn}>
-                        <div className={styles.author}>from: we-are@aclovers.lol</div>
-                        <div className={styles.subject}>we love you ac</div>
+                {messages.map((message, i) => (
+                    <div className={styles.email} key={i + 1}>
+                        <div className={styles.infoColumn}>
+                            <div className={styles.author}>{message.from}</div>
+                            <div className={styles.subject} onClick={() => {
+                                fetch("/api/content?id=" + message.id).then(r => r.text()).then(r => {
+                                    document.getElementById("content-" + message.id).innerHTML = r;
+                                });
+                            }}>{message.title.full}</div>
+                            <div id={"content-" + message.id}></div>
+                        </div>
                     </div>
-                </div>
-                <div className={styles.email}>
-                    <div className={styles.infoColumn}>
-                        <div className={styles.author}>from: we-are@aclovers.lol</div>
-                        <div className={styles.subject}>we love you ac</div>
-                    </div>
-                </div>
+                ))}
             </div>
         </>
     )

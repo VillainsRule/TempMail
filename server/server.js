@@ -166,11 +166,7 @@ app.get("/api/content", async (req, res) => {
         res.json({ error: "no id provided." });
         return;
     }
-    if (id < 1 || id > 3) {
-        res.json({ error: "invalid id." });
-        return;
-    }
-    switch (id) {
+    switch (parseInt(req.session.user.host)) {
         case 1:
             res.json((await _provider_2.Email.readMessageById(email, id)).body);
             break;
@@ -179,6 +175,9 @@ app.get("/api/content", async (req, res) => {
             break;
         case 3:
             res.json(await _provider_3.Email.getEmailContent(email, id));
+            break;
+        default:
+            res.json({ error: "invalid host." });
             break;
     }
 });
@@ -207,15 +206,28 @@ app.get("/api/messages", async (req, res) => {
         return;
     }
     let m = [];
+    if (host !== 2 && host !== 3) {
+        m.push({
+            id: 0,
+            from: "Admin <Admin@tempmail.villainsrule.xyz>",
+            to: "Me <" + email.email + ">",
+            title: {
+                preview: "Welcome to TempMail.",
+                full: "Welcome to TempMail."
+            },
+            date: new Date().toLocaleTimeString(),
+            state: "new"
+        });
+    }
     switch (host) {
         case 1:
-            m = await _provider_2.Email.refresh(req.session.user.email);
+            m = m.concat(await _provider_2.Email.refresh(req.session.user.email));
             break;
         case 2:
-            m = await _provider_3.Email.emails(req.session.user.email);
+            m = m.concat(await _provider_3.Email.emails(req.session.user.email));
             break;
         case 3:
-            m = await _provider_3.Email.emails(req.session.user.email);
+            m = m.concat(await _provider_3.Email.emails(req.session.user.email));
             break;
     };
     req.session.user.email.mail = m;
@@ -242,7 +254,7 @@ app.get("/api/shuffle/:server", async (req, res) => {
     if (!email.mail || !Array.isArray(email.mail)) {
         email.mail = [];
     }
-    if (!(server === 2)) {
+    if (!(server === 2) && !(server === 3)) {
         email.mail.push({
             id: 0,
             from: "Admin <Admin@tempmail.villainsrule.xyz>",

@@ -223,6 +223,10 @@ const Email = {
         console.miHook.log("sid from index: " + id);
         if (id) id = id.split("=")[1];
       }
+      if (decodeURIComponent(mi1) !== emailIdJson.email) {
+        email = emailIdJson.email;
+        mi = encodeURIComponent(email);
+      }
       let t_mi = checkedFC.split(";").find((x) => x.split("=")[0] === "MI" || x.split("=")[0] === "TMA");
       if (t_mi && t_mi !== "MI=undefined" && t_mi !== "TMA=undefined") {
         mi = t_mi.split("=")[1];

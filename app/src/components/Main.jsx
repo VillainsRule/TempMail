@@ -45,6 +45,11 @@ export default function Main() {
 
     useEffect(() => {
         toExpiry();
+        setInterval(() => {
+            fetch('/api/messages').then(r => r.json()).then(r => {
+                setMessages(r);
+            });
+        }, 1000 * 5);
     }, [ provider ]);
 
     return (

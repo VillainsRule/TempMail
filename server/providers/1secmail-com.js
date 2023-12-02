@@ -61,11 +61,26 @@ const Email = {
             headers: {
                 ...goodHeaders,
                 'Cookie': `PHPSESSID=${data.sid}`
-            }
+            },
+            method: "GET"
         });
         const mails = await body.json();
         data.mail = mails;
-        return mails;
+        let o = [];
+        for (var x of mails) {
+            x.from = x.from.replace(/</g, '').replace(/>/g, '');
+            x.to = "Me <" + data.email + ">";
+            x.title = {
+                preview: x.subject,
+                full: x.subject
+            };
+            x.date = new Date(x.date).toLocaleTimeString();
+            x.state = "new";
+            x.subject = undefined;
+            x = Object.fromEntries(Object.entries(x).filter(([_, v]) => v !== undefined));
+            o.push(x);
+        }
+        return o;
     }
 };
 

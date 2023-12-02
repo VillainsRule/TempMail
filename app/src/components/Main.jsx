@@ -12,14 +12,15 @@ export default function Main() {
     let [ email, setEmail ] = useState('loading...');
     let [ messages, setMessages ] = useState([]);
     let [ showingProviders, setShowingProviders ] = useState(false);
+    let [ cachedMessages, setCachedMessages ] = useState({});
 
     const toExpiry = (s = false, pr = 1) => {
         setEmail('loading...');
         if (s) {
             return fetch('/api/shuffle/' + (pr || provider)).then(r => r.json()).then(r => {
-                console.log(r);
                 setEmail(r.email);
                 setMessages(r.mail);
+                setCachedMessages({});
             });
         }
         fetch("/api/me").then(r => r.json()).then(r => {
@@ -27,11 +28,13 @@ export default function Main() {
                 fetch('/api/shuffle/' + provider).then(r => r.json()).then(r => {
                     setEmail(r.email);
                     setMessages(r.mail);
+                    setCachedMessages({});
                 });
             } else {
                 if (r.hasEmail) {
                     setEmail(r.email);
                     setMessages(r.messages);
+                    setCachedMessages({});
                 }
             }
         });
@@ -58,7 +61,7 @@ export default function Main() {
 
             <Header />
             <Email states={[ email, setShowingProviders ]} funcs={[ toExpiry, getExpiry ]}/>
-            <Messages states={[ [messages, setMessages] ]} />
+            <Messages states={[ [messages, setMessages], [cachedMessages, setCachedMessages] ]} />
 
             { showingProviders ? <ProviderList visibleStates={[ showingProviders, setShowingProviders ]} providerStates={[ provider, setProvider ]} funcs={[ toExpiry, getExpiry ]} /> : null }
         </>

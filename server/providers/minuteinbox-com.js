@@ -94,8 +94,15 @@ const Replacers = {
     parseFromOrTo: (fromOrTo) => {
         const email = fromOrTo.split('<')[1].split('>')[0];
         const name = fromOrTo.split('<')[0].trim();
+        let hasName = name.length > 0;
         if (email === "Admin@DisposableMail.com" || email === "Admin@MinuteInbox.com") {
             return "Admin <Admin@tempmail.villainsrule.xyz>";
+        } else {
+          if (hasName) {
+            return name + " <" + email + ">";
+          } else {
+            return email;
+          }
         }
     },
     spoofMessageTitle: (message) => {

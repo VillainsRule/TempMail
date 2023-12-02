@@ -168,13 +168,13 @@ app.get("/api/content", async (req, res) => {
     }
     switch (parseInt(req.session.user.host)) {
         case 1:
-            res.json((await _provider_2.Email.readMessageById(email, id)).body);
+            res.send((await _provider_2.Email.readMessageById(email, id)).body);
             break;
         case 2:
-            res.json(await _provider_3.Email.getEmailContent(email, id));
+            res.send(await _provider_3.Email.getEmailContent(email, id));
             break;
         case 3:
-            res.json(await _provider_3.Email.getEmailContent(email, id));
+            res.send(await _provider_3.Email.getEmailContent(email, id));
             break;
         default:
             res.json({ error: "invalid host." });

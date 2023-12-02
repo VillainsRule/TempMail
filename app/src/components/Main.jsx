@@ -19,7 +19,7 @@ export default function Main() {
         if (s) {
             return fetch('/api/shuffle/' + (pr || provider)).then(r => r.json()).then(r => {
                 setEmail(r.email);
-                setMessages(r.mail);
+                setMessages(r.mail || []);
                 setCachedMessages({});
             });
         }
@@ -27,7 +27,7 @@ export default function Main() {
             if (r.error) {
                 fetch('/api/shuffle/' + provider).then(r => r.json()).then(r => {
                     setEmail(r.email);
-                    setMessages(r.mail);
+                    setMessages(r.mail || []);
                     setCachedMessages({});
                 });
             } else {

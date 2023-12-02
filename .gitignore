@@ -1,3 +1,6 @@
 **/node_modules
 **/.DS_Store
 **/package-lock.json
+server/public
+server/1s_labels.json
+server/mi_labels.json

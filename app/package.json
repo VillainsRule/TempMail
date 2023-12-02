@@ -1,0 +1,21 @@
+{
+    "name": "10minutemail",
+    "description": "the best collection of 10 minute mail services.",
+    "type": "module",
+    "scripts": {
+        "dev": "vite",
+        "build": "vite build"
+    },
+    "dependencies": {
+        "@fortawesome/free-brands-svg-icons": "^6.5.1",
+        "@fortawesome/free-solid-svg-icons": "^6.4.2",
+        "@fortawesome/react-fontawesome": "^0.2.0",
+        "react": "^18.2.0",
+        "react-dom": "^18.2.0",
+        "react-router-dom": "^6.16.0"
+    },
+    "devDependencies": {
+        "@vitejs/plugin-react": "^4.1.0",
+        "vite": "^4.4.9"
+    }
+}

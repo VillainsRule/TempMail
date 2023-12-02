@@ -1,0 +1,15 @@
+.filteredBackground {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 999;
+    background-color: rgba(0, 0, 0, 0.3);
+}
+
+.modal {
+    background: #1f1f1f;
+    width: 50vw;
+    height: auto;
+}

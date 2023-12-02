@@ -1,0 +1,18 @@
+{
+    "name": "10minutemail",
+    "description": "the best collection of 10 minute mail services.",
+    "type": "module",
+    "main": "server.js",
+    "scripts": {
+        "dev": "nodemon main.js",
+        "start": "node main.js"
+    },
+    "dependencies": {
+        "axios": "^1.6.2",
+        "express": "^4.18.2",
+        "undici": "^5.28.2"
+    },
+    "devDependencies": {
+        "nodemon": "^3.0.1"
+    }
+}

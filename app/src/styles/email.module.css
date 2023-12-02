@@ -1,0 +1,47 @@
+.emailBox {
+    position: absolute;
+    top: 18.5vh;
+    left: calc(15vw - 20px);
+    height: 10vh;
+    width: 70vw;
+
+    border: 1.75px dashed rgba(131, 129, 129, 0.3);
+    border-image-source: url('./img/border.png');
+    border-image-slice: 2;
+    border-image-repeat: round;
+    
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    padding: 20px;
+}
+
+.email {
+    font-size: 5vh;
+    margin-top: 1vh;
+}
+
+.rightButtons {
+    display: flex;
+    gap: 2vw;
+}
+
+.rightButton {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    border: 1.75px dashed rgba(131, 129, 129, 0.3);
+    border-radius: 10px;
+
+    height: 7vh;
+    width: 7vh;
+
+    cursor: pointer;
+    padding: 10px;
+}
+
+.buttonIcon {
+    font-size: 5vh;
+}

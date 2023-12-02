@@ -1,0 +1,55 @@
+.blurb {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    text-align: center;
+}
+
+.logo {
+    height: 35vh;
+}
+
+.textColumn {
+    display: flex;
+    flex-direction: column;
+    width: 80vw;
+    gap: 2vh;
+}
+
+.title {
+    font-size: 8vh;
+}
+
+.description {
+    font-size: 4.5vh;
+    display: flex;
+    justify-content: center;
+}
+
+.link {
+    font-size: 4.5vh;
+    display: flex;
+    justify-content: center;
+    color: var(--link-color);
+    cursor: pointer;
+}
+
+@media only screen and (max-width: 350px) {
+    .logo {
+        height: 20vh;
+    }
+
+    .title {
+        font-size: 5vh;
+    }
+
+    .description {
+        font-size: 3vh;
+    }
+}

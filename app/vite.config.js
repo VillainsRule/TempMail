@@ -1,9 +1,17 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
+import auto from '@rollup/plugin-auto-install';
+import resolve from '@rollup/plugin-node-resolve';
+import compress from 'vite-plugin-compression';
 
 export default defineConfig({
     plugins: [
-        react()
+        react(),
+        compress({
+            algorithm: 'brotliCompress',
+            exclude: [/\.(br)$/, /\.(gz)$/],
+            deleteOriginalAssets: true,
+        })
     ],
     resolve: {
         alias: {
@@ -34,7 +42,12 @@ export default defineConfig({
     build: {
         target: 'es2022',
         outDir: '../server/public',
+        minify: 'terser',
         rollupOptions: {
+            plugins: [
+                auto(),
+                resolve(),
+            ],
             output: {
                 manualChunks: (id) => {
                     if (id.includes('node_modules')) return 'vendor';
@@ -43,6 +56,7 @@ export default defineConfig({
                 chunkFileNames: '[hash].js',
                 entryFileNames: '[hash].js',
                 assetFileNames: '[hash].[ext]',
+                minifyInternalExports: true
             },
         },
         chunkSizeWarningLimit: 1000,

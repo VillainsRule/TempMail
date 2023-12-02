@@ -12,4 +12,81 @@
     background: #1f1f1f;
     width: 50vw;
     height: auto;
+    opacity: 1;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 9999;
+    border-radius: 0.5rem;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+}
+
+.modalHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+    border-bottom: 1px solid #fff;
+}
+
+.modalHeader h2 {
+    color: #fff;
+}
+
+.modalHeader button {
+    background: none;
+    border: none;
+    color: #fff;
+    font-size: 1.5rem;
+    cursor: pointer;
+}
+
+.modalBody {
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+    justify-content: center;
+    align-items: center;
+}
+
+.modalBody p {
+    color: #fff;
+}
+
+.modalFooter {
+    display: flex;
+    justify-content: flex-end;
+    padding: 1rem;
+}
+
+.modalClose {
+    background: none;
+    border: none;
+    color: #fff;
+    font-size: 1.5rem;
+    cursor: pointer;
+}
+
+.provider {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1vw;
+    margin: 1rem;
+    border: 2px dashed #fff;
+    border-radius: 0.5rem;
+    width: 45vw;
+}
+
+.providerButton {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: 1.75px dashed rgba(131, 129, 129, 0.3);
+    border-radius: 10px;
+    width: 5vw;
+    cursor: pointer;
+    padding: 10px;
 }

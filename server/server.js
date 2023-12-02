@@ -25,9 +25,9 @@ app.use(session({
         return crypto.randomBytes(20).toString('hex');
     },
     name: 'tm_id_1',
-    resave: false,
+    resave: true,
     saveUninitialized: true,
-    cookie: { secure: true, maxAge: 600000 }
+    cookie: { secure: false, maxAge: 600000 }
 }));
 
 app.use((req, res, next) => {
@@ -109,6 +109,22 @@ class Generator {
     }
 }
 
+app.get("/api/tl", async (req, res) => {
+    let email = req.session.user.email;
+    let expiry = req.session.user.expiry;
+    let tl = expiry - new Date().getTime();
+    if (!email) {
+        res.json({ error: "no email in current session." });
+        return;
+    }
+    if (!expiry) {
+        res.json({ error: "no expiry in current session." });
+        return;
+    }
+    req.session.user.timeLeft = tl;
+    return res.json({ timeLeft: tl });
+});
+
 app.get("/api/get", async (req, res) => {
     let email = req.session.user.email;
     if (!email) {
@@ -117,10 +133,29 @@ app.get("/api/get", async (req, res) => {
     }
     return res.send({
         email: email.email,
-        host: parseInt(email.host),
+        host: parseInt(req.session.user.host),
         mail: email.mail,
-        expiry: email.expiry,
+        expiry: req.session.user.expiry,
         timeLeft: email.timeLeft
+    });
+});
+
+app.get("/api/me", async (req, res) => {
+    let email = req.session.user.email;
+    let expiry = req.session.user.expiry;
+    let tl = expiry - new Date().getTime();
+    if (tl <= 0) {
+        res.json({ error: "session expired." });
+        return;
+    }
+    if (!email) {
+        res.json({ error: "no email in current session." });
+        return;
+    }
+    return res.send({
+        hasEmail: email.email !== null && email.email !== undefined,
+        email: email.email,
+        messages: email.mail,
     });
 });
 
@@ -213,6 +248,7 @@ app.get("/api/shuffle/:server", async (req, res) => {
         email,
         host: server.toString(),
         expiry: new Date().getTime() + 600000,
+        timeLeft: 600000,
         ref: indR
     };
     refs.push({

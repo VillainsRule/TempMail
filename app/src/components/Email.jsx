@@ -2,11 +2,13 @@ import { useState } from 'react';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCheck, faCopy, faListOl } from '@fortawesome/free-solid-svg-icons';
+import ReactCountdownClock from 'react-countdown-clock';
 
 import styles from '@styles/email.module.css';
 
-export default function Email({ states }) {
+export default function Email({ states, funcs }) {
     let [ email, setShowingProviders ] = states;
+    let [ toExpiry ] = funcs;
     let [copied, setCopied] = useState(false);
 
     return (
@@ -18,6 +20,15 @@ export default function Email({ states }) {
                 </div>
 
                 <div className={styles.rightButtons}>
+                    <div className={styles.rightButton}>
+                        <ReactCountdownClock seconds={10 * 60}
+                            color="#fff"
+                            alpha={1}
+                            size={50}
+                            fontSize={0}
+                            weight={10}
+                            onComplete={() => toExpiry()} />
+                    </div>
                     <div className={styles.rightButton}>
                         <FontAwesomeIcon icon={copied ? faCheck : faCopy} className={styles.buttonIcon} onClick={() => {
                             if (!copied) {

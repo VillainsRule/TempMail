@@ -34,7 +34,7 @@ export default function Email({ states, funcs }) {
                     <div className={styles.rightButton}>
                         <ReactCountdownClock
                             seconds={expiry || 10 * 60}
-                            color="#fff"
+                            color='#fff'
                             alpha={1}
                             size={50}
                             fontSize={0}

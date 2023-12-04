@@ -23,7 +23,8 @@ export default function Main() {
                 setCachedMessages({});
             });
         }
-        fetch("/api/me").then(r => r.json()).then(r => {
+        
+        fetch('/api/me').then(r => r.json()).then(r => {
             if (r.error) {
                 fetch('/api/shuffle/' + provider).then(r => r.json()).then(r => {
                     setEmail(r.email);

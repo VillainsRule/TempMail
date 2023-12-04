@@ -1,32 +1,34 @@
-import { request } from "undici";
-import ua from "random-useragent";
+import { request } from 'undici';
 
 let p = {};
 
 export async function getEmail() {
     let key = await (
-        await request("https://smailpro.com/app/key", {
-            method: "POST",
+        await request('https://smailpro.com/app/key', {
+            method: 'POST',
             headers: {
-                "Content-Type": "application/json",
-                "User-Agent": ua.getRandom(),
+                'Content-Type': 'application/json',
+                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36',
             },
-            body: JSON.stringify({ domain: "random", username: "random" }),
+            body: JSON.stringify({
+                domain: 'random',
+                username: 'random'
+            }),
         })
     ).body.json();
     if (key.code !== 200) {
-        throw new Error("Failed to get key: " + key.msg);
+        throw new Error('Failed to get key: ' + key.msg);
     }
     key = key.items;
-    const email = await (await request("https://api.sonjj.com/email/gd/get?key=" + key + "&rapidapi-key=f871a22852mshc3ccc49e34af1e8p126682jsn734696f1f081&domain=random&username=random", {
-        method: "GET",
+    const email = await (await request('https://api.sonjj.com/email/gd/get?key=' + key + '&rapidapi-key=f871a22852mshc3ccc49e34af1e8p126682jsn734696f1f081&domain=random&username=random', {
+        method: 'GET',
         headers: {
-            "Content-Type": "application/json",
-            "User-Agent": ua.getRandom(),
+            'Content-Type': 'application/json',
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36',
         },
     })).body.json();
     if (email.code !== 200) {
-        throw new Error("Failed to get email: " + email.msg);
+        throw new Error('Failed to get email: ' + email.msg);
     }
     p[email.items.email] = key;
     return {
@@ -39,17 +41,20 @@ export async function getEmail() {
 setInterval(async () => {
     for (var x of Object.keys(p)) {
         let key = await (
-            await request("https://smailpro.com/app/key", {
-                method: "POST",
+            await request('https://smailpro.com/app/key', {
+                method: 'POST',
                 headers: {
-                    "Content-Type": "application/json",
-                    "User-Agent": ua.getRandom(),
+                    'Content-Type': 'application/json',
+                    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36',
                 },
-                body: JSON.stringify({ domain: x.split("@")[1], username: x.split("@")[0] }),
+                body: JSON.stringify({
+                    domain: x.split('@')[1],
+                    username: x.split('@')[0]
+                }),
             })
         ).body.json();
         if (key.code !== 200) {
-            throw new Error("Failed to get key: " + key.msg);
+            throw new Error('Failed to get key: ' + key.msg);
         }
         key = key.items;
         p[x] = key;
@@ -62,15 +67,15 @@ export async function update(data) {
 }
 
 export async function getInbox(data) {
-    const inbox = await (await request("https://api.sonjj.com/email/gd/check?key=" + data.key + "&rapidapi-key=f871a22852mshc3ccc49e34af1e8p126682jsn734696f1f081&email=" + data.email + "&timestamp=" + data.timestamp, {
-        method: "GET",
+    const inbox = await (await request('https://api.sonjj.com/email/gd/check?key=' + data.key + '&rapidapi-key=f871a22852mshc3ccc49e34af1e8p126682jsn734696f1f081&email=' + data.email + '&timestamp=' + data.timestamp, {
+        method: 'GET',
         headers: {
-            "Content-Type": "application/json",
-            "User-Agent": ua.getRandom(),
+            'Content-Type': 'application/json',
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36',
         },
     })).body.json();
     if (inbox.code !== 200) {
-        throw new Error("Failed to get inbox: " + inbox.msg);
+        throw new Error('Failed to get inbox: ' + inbox.msg);
     }
     return inbox.items;
 }

@@ -3,12 +3,10 @@ import express from 'express';
 import session from 'express-session';
 import crypto from 'crypto';
 
-import _provider_1 from './providers/10minutemail-one.js';
 import * as _provider_2 from './providers/1secmail-com.js';
 import * as _provider_3 from './providers/minuteinbox-com.js';
 import * as _provider_4 from './providers/tempmail-plus.js';
 
-// pointless declarative types (will be useful for a potential "switch servers" button on the frontend)
 const Providers = {
     OneSecMail: 1,
     MinuteInbox: 2,
@@ -19,12 +17,9 @@ const Providers = {
 const app = express();
 app.set('trust proxy', 1);
 
-
 app.use(session({
     secret: crypto.randomBytes(20).toString('hex'),
-    genid: (req) => {
-        return crypto.randomBytes(20).toString('hex');
-    },
+    genid: (req) => crypto.randomBytes(20).toString('hex'),
     name: 'tm_id_1',
     resave: true,
     saveUninitialized: true,
@@ -35,7 +30,7 @@ app.use((req, res, next) => {
     if (req.session.email) {
         if (req.session.user.expiry < new Date().getTime()) {
             req.session.destroy();
-            return res.redirect("/");
+            return res.redirect('/');
         }
     }
     next();
@@ -66,19 +61,6 @@ class Generator {
     constructor(provider, optional_res = {}) {
         this.#prov = provider;
         this.#res = optional_res;
-    }
-
-    async #generate_10mm() {
-        let mail = new _provider_1();
-        return new Promise(res => mail.events.on('createEmail', async (email) => {
-            let m = await mail.getMessages();
-            res({
-                email: email,
-                messages: m,
-                host: "https://10minutemail.one",
-                ref: mail
-            });
-        }));
     }
 
     async #generate_1sm() {
@@ -113,26 +95,26 @@ class Generator {
     }
 }
 
-app.get("/api/tl", async (req, res) => {
+app.get('/api/tl', async (req, res) => {
     let email = req.session.user.email;
     let expiry = req.session.user.expiry;
     let tl = expiry - new Date().getTime();
     if (!email) {
-        res.json({ error: "no email in current session." });
+        res.json({ error: 'no email in current session.' });
         return;
     }
     if (!expiry) {
-        res.json({ error: "no expiry in current session." });
+        res.json({ error: 'no expiry in current session.' });
         return;
     }
     req.session.user.timeLeft = tl;
     return res.json({ timeLeft: tl });
 });
 
-app.get("/api/get", async (req, res) => {
+app.get('/api/get', async (req, res) => {
     let email = req.session.user.email;
     if (!email) {
-        res.json({ error: "no email in current session." });
+        res.json({ error: 'no email in current session.' });
         return;
     }
     return res.send({
@@ -144,16 +126,16 @@ app.get("/api/get", async (req, res) => {
     });
 });
 
-app.get("/api/me", async (req, res) => {
+app.get('/api/me', async (req, res) => {
     let email = req.session.user.email;
     let expiry = req.session.user.expiry;
     let tl = expiry - new Date().getTime();
     if (tl <= 0) {
-        res.json({ error: "session expired." });
+        res.json({ error: 'session expired.' });
         return;
     }
     if (!email) {
-        res.json({ error: "no email in current session." });
+        res.json({ error: 'no email in current session.' });
         return;
     }
     return res.send({
@@ -163,15 +145,15 @@ app.get("/api/me", async (req, res) => {
     });
 });
 
-app.get("/api/content", async (req, res) => {
+app.get('/api/content', async (req, res) => {
     let email = req.session.user.email;
     let id = req.query.id;
     if (!email) {
-        res.json({ error: "no email in current session." });
+        res.json({ error: 'no email in current session.' });
         return;
     }
     if (id === undefined || id === null) {
-        res.json({ error: "no id provided." });
+        res.json({ error: 'no id provided.' });
         return;
     }
     switch (parseInt(req.session.user.host)) {
@@ -188,46 +170,46 @@ app.get("/api/content", async (req, res) => {
             res.send(await _provider_4.getEmailContent(email, id));
             break;
         default:
-            res.json({ error: "invalid host." });
+            res.json({ error: 'invalid host.' });
             break;
     }
 });
 
-app.get("/api/messages", async (req, res) => {
+app.get('/api/messages', async (req, res) => {
     if (!req.session.user) {
-        res.json({ error: "no session." });
+        res.json({ error: 'no session.' });
         return;
     }
     if (!req.session.user.email) {
-        res.json({ error: "no email in current session." });
+        res.json({ error: 'no email in current session.' });
         return;
     }
     let email = req.session.user.email.email;
     let host = parseInt(req.session.user.host);
     if (!email) {
-        res.json({ error: "no email in current session." });
+        res.json({ error: 'no email in current session.' });
         return;
     }
     if (host === undefined || host === null) {
-        res.json({ error: "no host in current session." });
+        res.json({ error: 'no host in current session.' });
         return;
     }
     if (host < 1 || host > 4) {
-        res.json({ error: "invalid host." });
+        res.json({ error: 'invalid host.' });
         return;
     }
     let m = [];
     if (host !== 2 && host !== 3) {
         m.push({
             id: 0,
-            from: "Admin <Admin@tempmail.villainsrule.xyz>",
-            to: "Me <" + email.email + ">",
+            from: 'Admin <Admin@tempmail.villainsrule.xyz>',
+            to: 'Me <' + email.email + '>',
             title: {
-                preview: "Welcome to TempMail.",
-                full: "Welcome to TempMail."
+                preview: 'Welcome to TempMail.',
+                full: 'Welcome to TempMail.'
             },
             date: new Date().toLocaleTimeString(),
-            state: "new"
+            state: 'new'
         });
     }
     switch (host) {
@@ -253,14 +235,14 @@ app.get("/api/messages", async (req, res) => {
 let refs = [];
 let indR = 0;
 
-app.get("/api/shuffle/:server", async (req, res) => {
+app.get('/api/shuffle/:server', async (req, res) => {
     let server = parseInt(req.params.server) || Providers.TenMinuteMail;
     if (server < 1 || server > 4) {
-        res.json({ error: "invalid server." });
+        res.json({ error: 'invalid server.' });
         return;
     }
     if (req.session.user && req.session.user.expiry && req.session.user.expiry > new Date().getTime() && server === parseInt(req.session.user.host)) {
-        res.json({ error: "please wait before shuffling again." });
+        res.json({ error: 'please wait before shuffling again.' });
         return;
     }
     let gen = new Generator(server, res);
@@ -271,14 +253,14 @@ app.get("/api/shuffle/:server", async (req, res) => {
     if (!(server === 2) && !(server === 3)) {
         email.mail.push({
             id: 0,
-            from: "Admin <Admin@tempmail.villainsrule.xyz>",
-            to: "Me <" + email.email + ">",
+            from: 'Admin <Admin@tempmail.villainsrule.xyz>',
+            to: 'Me <' + email.email + '>',
             title: {
-                preview: "Welcome to TempMail.",
-                full: "Welcome to TempMail."
+                preview: 'Welcome to TempMail.',
+                full: 'Welcome to TempMail.'
             },
             date: new Date().toLocaleTimeString(),
-            state: "new"
+            state: 'new'
         });
     }
     req.session.user = {

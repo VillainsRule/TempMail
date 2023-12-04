@@ -1,11 +1,10 @@
 import { request } from 'undici';
 import fs from 'fs';
-import { JSDOM } from 'jsdom';
 
 let file;
-if (!fs.existsSync("1s_labels.json"))
-  fs.writeFileSync("1s_labels.json", JSON.stringify({}));
-file = JSON.parse(fs.readFileSync("1s_labels.json", "utf8"));
+if (!fs.existsSync('1s_labels.json'))
+    fs.writeFileSync('1s_labels.json', JSON.stringify({}));
+file = JSON.parse(fs.readFileSync('1s_labels.json', 'utf8'));
 
 const goodHeaders = {
     'Accept': '*/*',
@@ -24,7 +23,9 @@ const goodHeaders = {
  */
 const Email = {
     async readMessageById(data, id) {
-        const { body } = await request(`https://www.1secmail.com/api/v1/?action=readMessage&login=${data.email.split('@')[0]}&domain=${data.email.split('@')[1]}&id=${id}`, {
+        const {
+            body
+        } = await request(`https://www.1secmail.com/api/v1/?action=readMessage&login=${data.email.split('@')[0]}&domain=${data.email.split('@')[1]}&id=${id}`, {
             headers: {
                 ...goodHeaders,
                 'Cookie': `PHPSESSID=${data.sid}`
@@ -39,43 +40,51 @@ const Email = {
             headers: goodHeaders
         });
         const sid = forSid.headers['set-cookie'].split(';')[0].split('=')[1];
-        const { body } = await request('https://www.1secmail.com/api/v1/?action=genRandomMailbox&count=1', {
+        const {
+            body
+        } = await request('https://www.1secmail.com/api/v1/?action=genRandomMailbox&count=1', {
             headers: {
                 ...goodHeaders,
                 'Cookie': `PHPSESSID=${sid}`
             }
         });
         const email = (await body.json())[0];
-        file[email] = {user: email.split('@')[0], domain: email.split('@')[1], mail: []};
+        file[email] = {
+            user: email.split('@')[0],
+            domain: email.split('@')[1],
+            mail: []
+        };
         file[email].email = email;
         file[email].sid = sid;
         var mails = await Email.refresh(file[email]);
         file[email].mail = mails;
         file[email].host = 'https://www.1secmail.com';
-        fs.writeFileSync("1s_labels.json", JSON.stringify(file));
+        fs.writeFileSync('1s_labels.json', JSON.stringify(file));
         return file[email];
     },
 
     async refresh(data) {
-        const { body } = await request(`https://www.1secmail.com/api/v1/?action=getMessages&login=${data.email.split('@')[0]}&domain=${data.email.split('@')[1]}`, {
+        const {
+            body
+        } = await request(`https://www.1secmail.com/api/v1/?action=getMessages&login=${data.email.split('@')[0]}&domain=${data.email.split('@')[1]}`, {
             headers: {
                 ...goodHeaders,
                 'Cookie': `PHPSESSID=${data.sid}`
             },
-            method: "GET"
+            method: 'GET'
         });
         const mails = await body.json();
         data.mail = mails;
         let o = [];
         for (var x of mails) {
             x.from = x.from.replace(/</g, '').replace(/>/g, '');
-            x.to = "Me <" + data.email + ">";
+            x.to = 'Me <' + data.email + '>';
             x.title = {
                 preview: x.subject,
                 full: x.subject
             };
             x.date = new Date(x.date).toLocaleTimeString();
-            x.state = "new";
+            x.state = 'new';
             x.subject = undefined;
             x = Object.fromEntries(Object.entries(x).filter(([_, v]) => v !== undefined));
             o.push(x);
@@ -116,13 +125,16 @@ const Cache = {
 
     save(email, data) {
         file[email] = data;
-        fs.writeFileSync("1s_labels.json", JSON.stringify(file));
+        fs.writeFileSync('1s_labels.json', JSON.stringify(file));
     },
 
     clear() {
-        fs.writeFileSync("1s_labels.json", JSON.stringify({}));
+        fs.writeFileSync('1s_labels.json', JSON.stringify({}));
         file = {};
     }
 };
 
-export { Email, Cache };
+export {
+    Email,
+    Cache
+};

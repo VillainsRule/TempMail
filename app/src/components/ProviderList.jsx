@@ -20,7 +20,7 @@ export default function ProviderList({ visibleStates, providerStates, funcs }) {
                     <div className={styles.modalClose} onClick={() => setShowingProviders(false)}>X</div>
                 </div>
                 <div className={styles.modalBody}>
-                    <p style={{color: "gray"}}>Are your other emails blocked? You may switch providers with this menu.</p>
+                    <p style={{ color: 'gray' }}>Are your other emails blocked? You may switch providers with this menu.</p>
                     {range(4).map(i => (
                         <div className={styles.provider} key={i + 1}>
                             <div className={styles.providerName}>Server {i + 1}</div>

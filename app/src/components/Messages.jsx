@@ -21,15 +21,15 @@ export default function Email({ states }) {
                                     if (message.id > 0) {
                                         let c = cachedMessages[message.id];
                                         if (c) {
-                                            document.getElementById("content-" + message.id).innerHTML = sanitizeHtml(c, {
+                                            document.getElementById('content-' + message.id).innerHTML = sanitizeHtml(c, {
                                                 allowedTags: sanitizeHtml.defaults.allowedTags.concat([ 'img', 'style' ]),
                                                 allowVulnerableTags: true
                                             });
                                         } else {
-                                            fetch("/api/content?id=" + message.id).then(r => r.text()).then(r => {
+                                            fetch('/api/content?id=' + message.id).then(r => r.text()).then(r => {
                                                 msg_id_cache[message.id] = r;
                                                 setCachedMessages(msg_id_cache);
-                                                document.getElementById("content-" + message.id).innerHTML = sanitizeHtml(r, {
+                                                document.getElementById('content-' + message.id).innerHTML = sanitizeHtml(r, {
                                                     allowedTags: sanitizeHtml.defaults.allowedTags.concat([ 'img', 'style' ]),
                                                     allowVulnerableTags: true
                                                 });
@@ -37,10 +37,10 @@ export default function Email({ states }) {
                                         }
                                     }
                                 } else {
-                                    document.getElementById("content-" + message.id).innerHTML = "";
+                                    document.getElementById('content-' + message.id).innerHTML = '';
                                 }
                             }}>{message.title.full}</div>
-                            <div id={"content-" + message.id}></div>
+                            <div id={'content-' + message.id}></div>
                         </div>
                     </div>);
                 })}

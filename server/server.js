@@ -6,12 +6,14 @@ import crypto from 'crypto';
 import _provider_1 from './providers/10minutemail-one.js';
 import * as _provider_2 from './providers/1secmail-com.js';
 import * as _provider_3 from './providers/minuteinbox-com.js';
+import * as _provider_4 from './providers/tempmail-plus.js';
 
 // pointless declarative types (will be useful for a potential "switch servers" button on the frontend)
 const Providers = {
     OneSecMail: 1,
     MinuteInbox: 2,
-    DisposableMail: 3
+    DisposableMail: 3,
+    TempMailPlus: 4
 };
 
 const app = express();
@@ -91,6 +93,10 @@ class Generator {
         return await _provider_3.Email.generate(_provider_3.Host.DisposableMail);
     }
 
+    async #generate_tmp() {
+        return await _provider_4.getEmails();
+    }
+
     async generate() {
         switch (this.#prov) {
             case 1:
@@ -99,6 +105,8 @@ class Generator {
                 return await this.#generate_mi();
             case 3:
                 return await this.#generate_dm();
+            case 4:
+                return await this.#generate_tmp();
             default:
                 return await this.#generate_1sm();
         }
@@ -176,6 +184,9 @@ app.get("/api/content", async (req, res) => {
         case 3:
             res.send(await _provider_3.Email.getEmailContent(email, id));
             break;
+        case 4:
+            res.send(await _provider_4.getEmailContent(email, id));
+            break;
         default:
             res.json({ error: "invalid host." });
             break;
@@ -201,7 +212,7 @@ app.get("/api/messages", async (req, res) => {
         res.json({ error: "no host in current session." });
         return;
     }
-    if (host < 1 || host > 3) {
+    if (host < 1 || host > 4) {
         res.json({ error: "invalid host." });
         return;
     }
@@ -229,6 +240,9 @@ app.get("/api/messages", async (req, res) => {
         case 3:
             m = m.concat(await _provider_3.Email.emails(req.session.user.email));
             break;
+        case 4:
+            m = m.concat(await _provider_4.getEmails(req.session.user.email));
+            break;
     };
     req.session.user.email.mail = m;
     req.session.save((e) => {
@@ -241,7 +255,7 @@ let indR = 0;
 
 app.get("/api/shuffle/:server", async (req, res) => {
     let server = parseInt(req.params.server) || Providers.TenMinuteMail;
-    if (server < 1 || server > 3) {
+    if (server < 1 || server > 4) {
         res.json({ error: "invalid server." });
         return;
     }
